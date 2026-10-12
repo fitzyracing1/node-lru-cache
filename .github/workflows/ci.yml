@@ -54,3 +54,7 @@ jobs:
 
       - name: Run Tests
         run: npm test -- -c -t0
+
+      - name: Debug coverage report (try branch only)
+        if: always()
+        run: npx tap report text --coverage-report=text || echo "report exit $?"
