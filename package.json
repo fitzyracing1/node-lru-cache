@@ -12,7 +12,7 @@
   "scripts": {
     "build": "npm run prepare",
     "prepare": "tshy && bash scripts/build.sh",
-    "pretest": "npm run prepare",
+    "pretest": "npm run prepare && tap build",
     "presnap": "npm run prepare",
     "test": "tap",
     "snap": "tap",
