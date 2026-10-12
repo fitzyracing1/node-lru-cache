@@ -55,15 +55,11 @@ jobs:
       - name: Run Tests
         run: npm test -- -c -t0
 
-      - name: Debug exit code (try branch only)
+      - name: Debug exit code per file (try branch only)
         if: always()
         shell: bash
         run: |
           set +e
-          npx tap -t0 test/perf.ts > /dev/null; echo "single-file tap exit=$?"
-          npx tap -t0 test/perf.ts --no-coverage-report > /dev/null; echo "single-file no-report exit=$?"
-          npx tap -t0 --disable-coverage test/perf.ts > /dev/null; echo "single-file disable-coverage exit=$?"
-          ls -la .tap .tap/plugins; cat .tap/plugins/package.json
-          ls .tap/plugins/node_modules/@tapjs | tr '\n' ' '
-          npx tap version; npx tap plugin list
+          for f in test/*.ts test/*.mjs; do npx tap -t0 --disable-coverage "$f" > /tmp/o.txt 2>&1; ec=$?; echo "$ec $f"; [ $ec -ne 0 ] && tail -30 /tmp/o.txt; done
+          npx tap -c -t0 > /tmp/all.txt 2>&1; echo "full exit=$?"; grep -niE "fail|error|exit|signal|leak|handle" /tmp/all.txt | grep -v " 0 fail" | head -40
           true
