@@ -55,6 +55,15 @@ jobs:
       - name: Run Tests
         run: npm test -- -c -t0
 
-      - name: Debug coverage report (try branch only)
+      - name: Debug exit code (try branch only)
         if: always()
-        run: npx tap report text --coverage-report=text || echo "report exit $?"
+        shell: bash
+        run: |
+          set +e
+          npx tap -t0 test/perf.ts > /dev/null; echo "single-file tap exit=$?"
+          npx tap -t0 test/perf.ts --no-coverage-report > /dev/null; echo "single-file no-report exit=$?"
+          npx tap -t0 --disable-coverage test/perf.ts > /dev/null; echo "single-file disable-coverage exit=$?"
+          ls -la .tap .tap/plugins; cat .tap/plugins/package.json
+          ls .tap/plugins/node_modules/@tapjs | tr '\n' ' '
+          npx tap version; npx tap plugin list
+          true
