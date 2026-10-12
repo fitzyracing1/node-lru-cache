@@ -57,6 +57,8 @@ jobs:
         run: |
           set +e
           npm run prepare > /dev/null 2>&1; echo "prepare exit=$?"
+          npx tap build > /tmp/b.txt 2>&1; echo "tap build exit=$?"; tail -20 /tmp/b.txt
+          ls .tap/plugins/node_modules/@tapjs | tr '\n' ' '; echo
           npx tap -c -t0 > /tmp/a1.txt 2>&1; echo "tap run1 exit=$?"; grep -vE "PASS|^\s*$" /tmp/a1.txt | tail -15
           npx tap -c -t0 > /tmp/a2.txt 2>&1; echo "tap run2 exit=$?"
           npm test -- -c -t0 > /tmp/a3.txt 2>&1; echo "npm test run3 exit=$?"
